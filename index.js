@@ -61,4 +61,17 @@ app.post('/add', (req, res) => {
   };
 
   ref
-    .update(new
+    .update(newData)
+    .then(() => {
+      console.log('Data updated successfully.');
+      res.json(newData);
+    })
+    .catch((error) => {
+      console.error('Error updating data:', error);
+      res.status(500).json({ error: 'Failed to update data' });
+    });
+});
+
+app.listen(port, () => {
+  console.log(`Express started on http://localhost:${port}; press Ctrl-C to terminate.`);
+});

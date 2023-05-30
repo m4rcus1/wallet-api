@@ -35,7 +35,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/add', (req, res) => {
-  res.render('add');
+  try {
+    res.render('add');
+  } catch (error) {
+    console.error('Error rendering template:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 app.post('/add', (req, res) => {

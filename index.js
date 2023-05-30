@@ -1,15 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ref } = require('./firebase.js');
+const exphbs  = require('express-handlebars');
 
 const app = express();
 const port = 8080;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', './views');
-
 // Read data
 ref.once('value')
   .then((snapshot) => {

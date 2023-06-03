@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "echo 'No build process specified'"
+    "build": "npm install && echo 'Build complete!'"
   },
   "author": "Your Name",
   "license": "MIT",

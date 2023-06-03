@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const { ref } = require('./firebase.js');
 const exphbs = require('express-handlebars');
 const cors = require('cors'); // Import the cors module
-const randomstring = require('randomstring');
+
 const app = express();
 const port = 8080;
 

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const { ref } = require('./firebase.js');
 const exphbs = require('express-handlebars');
 const cors = require('cors'); // Import the cors module
-
+const randomstring = require('randomstring');
 const app = express();
 const port = 8080;
 
@@ -37,6 +37,40 @@ const readData = () => {
     });
 };
 
+
+// Function tạo khóa ngẫu nhiên
+const generateRandomKey = (length) => {
+  return randomstring.generate({
+    length: length,
+    charset: 'alphanumeric'
+  });
+};
+
+// Function kiểm tra sự tồn tại của khóa trong Firebase
+const checkKeyExists = async (key) => {
+  try {
+    const snapshot = await admin.database().ref(key).once('value');
+    return snapshot.exists();
+  } catch (error) {
+    console.error('Error checking key existence:', error);
+    throw error;
+  }
+};
+
+// Function tạo và kiểm tra khóa
+const generateAndCheckKey = async (length) => {
+  const key = generateRandomKey(length);
+  console.log('Random Key:', key);
+
+  try {
+    const exists = await checkKeyExists(key);
+    console.log(`Key '${key}' exists: ${exists}`);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
 app.get('/', async (req, res) => {
   try {
     const data = await readData();
@@ -57,32 +91,37 @@ app.get('/add', (req, res) => {
   }
 });
 
-app.post('/add', (req, res) => {
+
+
+app.post('/add', async (req, res) => {
   const { account, password } = req.body;
 
   if (!account || !password) {
     return res.status(400).json({ error: 'Missing account or password in the request body' });
   }
+  let detail='User Detail'
+  const key = generateRandomKey(28); // Generate a random key
 
   const newData = {
-    [account]: {
-      role: 0,
-      account: account,
-      password: password,
+    [key]: {
+      [detail]: {
+        role: 0,
+        userAccount: account,
+        userPassword: password,
+      },
     },
   };
 
-  ref
-    .update(newData)
-    .then(() => {
-      console.log('Data updated successfully.');
-      res.json(newData);
-    })
-    .catch((error) => {
-      console.error('Error updating data:', error);
-      res.status(500).json({ error: 'Failed to update data' });
-    });
+  try {
+    await ref.update(newData);
+    console.log('Data updated successfully.');
+    res.json(newData);
+  } catch (error) {
+    console.error('Error updating data:', error);
+    res.status(500).json({ error: 'Failed to update data' });
+  }
 });
+
 
 app.listen(port, () => {
   console.log(`Express started on http://localhost:${port}; press Ctrl-C to terminate.`);

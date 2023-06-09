@@ -1,0 +1,15 @@
+stages:
+  - build
+  - deploy
+
+build_job:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+
+deploy_job:
+  stage: deploy
+  script:
+    - npm install -g now
+    - now --prod

@@ -13,3 +13,6 @@ deploy_job:
   script:
     - npm install -g now
     - now --prod
+  environment:
+    name: production
+    url: https://east-longhaired-lan.glitch.me/
